@@ -1,7 +1,6 @@
 # In-Class Programming Activity, Day 1
 
-Your work goes here ...
-
+## NADIA BERRIEL
 
 
 ## Test statements
@@ -9,3 +8,54 @@ Your work goes here ...
 ```{r}
 scoreActivity::score253(1)
 ```
+
+## Task 1
+
+```{r}
+library(mosaicData)
+```
+
+## Task 2
+
+```{r}
+paste("Today is",date())
+```
+
+## Task 3
+
+```{r}
+task3a = variable.names(Galton)
+print(task3a)
+
+
+task3b = length(case.names(Galton))
+print(task3b)
+
+
+task3c = mean(Galton$height)
+print(task3c)
+```
+
+## Task 4
+
+```{r}
+task4 = matrix(c(1,4,2,5,3,6),nrow = 2,ncol = 3)
+print(task4)
+```
+
+## Task 5
+
+```{r}
+task5x = runif(1000, min = 0, max = 1)
+print(task5x)
+
+task5y = runif(1000, min = 0, max = 1)
+print(task5y)
+
+task5pi = sqrt((task5x^2) + (task5y^2))
+print(task5pi)
+print((sum(task5pi <= 1)/1000))
+
+print(pi/4)
+```
+
