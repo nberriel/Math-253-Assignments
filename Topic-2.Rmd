@@ -95,7 +95,7 @@ summary (lm.fit5)
 
 #Problem 3.6.6
 ```{r}
-fix(Carseats)
+#fix(Carseats)
 names(Carseats)
 
 lm.fit=lm(Sales~.+Income:Advertising +Price:Age, data=Carseats)
@@ -107,6 +107,11 @@ contrasts(ShelveLoc)
 
 #Problem. 3.6.7
 ```{r}
+LoadLibraries = function(){
+  library(ISLR)
+  library(MASS)
+  cat("The libraries have been loaded.")
+}
 #Loaded LoadLibraries
 LoadLibraries()
 ```
