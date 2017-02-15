@@ -1,8 +1,42 @@
 # In-Class Programming Activity, Day 4
 
-Your work goes here ...
+## Nadia BERRIEL
 
+## Task 1 
+```{r}
+plot(1, xlim = c(0,100), ylim = c(0,100))
+```
 
+## Task 2
+```{r}
+plot(1, xlim = c(0,100), ylim = c(0,100))
+x1 = c(100,100)
+y1 = c(0,100)
+
+x2 = c(s0,0)
+y2 = c(100,0)
+lines(c(x1,x2),c(y1,y2))
+```
+
+## Task 3
+```{r}
+plot(1, xlim = c(0,60), ylim = c(0,80))
+x3 = sin(seq(0,2*pi)) + 50
+y3 = cos(seq(0,2*pi)) + 60
+lines(x3,y3)
+```
+## Task 4
+```{r}
+plot(1, xlim = c(1,1), ylim = c(1,1))
+x4 = abs(sin(seq(0,2*pi))) 
+y4 = abs(cos(seq(0,2*pi)))
+polygon(x4,y4)
+```
+
+## Task 5
+```{r}
+#Done
+```
 
 ## Test statements
 

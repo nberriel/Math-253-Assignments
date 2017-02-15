@@ -1,2 +1,186 @@
 # Topic 1 Exercises
 
+### Nadia BERRIEL
+
+###Homework 1 Due: February 9, 2017
+
+#### Discussion Questions
+
+## Problem 2.4.1
+
+### Part A
+
+The sample size n is extremely large, and the number of predictors p is small. Due to the huge amount of data, we would expect the performance of a flexible statistical model.
+
+### Part B
+
+The number of predictors p is extremely large, and the number of observations n is small. In this situation we would expect the inflexible method to be the best.
+
+### Part C
+
+The relationship between the predictors and response is highly non-linear. The inflexible method would be best option. 
+
+### Part D
+
+The variance of the error terms is extremely high. This case would call for a flexible method.
+
+## Problem 2.4.3
+
+## Part B
+
+The training error declines as flexibility increases due to flexibility increasing the f curve so that it fits the observed data more closely. The test error decreases at first as flexibility increases but at one point it levels off and then begins to increase creating a parabola. This is caused by the curve yielding a small training erroe but a large test error. The squared bias decreases and the variance increases.
+
+## Problem 2.4.6
+
+Parametric approaches are resitrictive, but fewer observations of underlying data are required in order to have an appropriate fit. Nonparametric methods are required when the underlying data is very different from what can fit with parametric techniques.
+
+#### Computing Assignments
+
+## Problem 2.4.8 
+
+## Part A
+```{r}
+library(mosaicData)
+College
+```
+
+## Part B
+```{r}
+rownames(College) = College[,1]
+fix(College)
+
+College = College[,-1]
+fix(College)
+summary(College)
+```
+
+## Part C
+```{r}
+summary(College)
+
+pairs(College[,1:10])
+
+plot(College$Outstate, College$Private)
+
+Elite = rep("No",nrow(College))
+Elite[College$Top10perc > 50] = "Yes"
+Elite = as.factor(Elite)
+college = data.frame(College,Elite)
+summary(college)
+plot(College$Outstate, College$Elite)
+
+par(mfrow = c(2,2))
+hist(College$PhD)
+hist(College$Accept)
+hist(College$Enroll)
+hist(College$S.F.Ratio)
+```
+
+I discovered that the more selective the school, the smaller the acceptance rate and enrollment rate as well.
+
+## Problem 2.4.9
+
+## Part A
+
+There are 8 quantitative predictors: mpg, cylinders, displacement, horsepower, weight, acceleration, year, and origin. The one qualitative predictor is name. 
+
+## Part B
+```{r}
+range(Auto$mpg)
+range(Auto$cylinders)
+range(Auto$displacement)
+range(Auto$horsepower)
+range(Auto$weight)
+range(Auto$acceleration)
+range(Auto$year)
+range(Auto$origin)
+```
+
+## Part C
+```{r}
+summary(Auto)
+sd(Auto$mpg)
+sd(Auto$cylinders)
+sd(Auto$displacement)
+sd(Auto$horsepower)
+sd(Auto$weight)
+sd(Auto$acceleration)
+sd(Auto$year)
+sd(Auto$origin)
+```
+The mean for mpg is 23.52 and the standard deviation is 7.825804.
+The mean for cylinders is 4 and the standard deviation is 1.701577.
+The mean for displacement is 193.5 and the standard deviation is 7.825804
+The mean for horsepower is 104.5 and the standard deviation does not exist.
+The mean for weight is 2970 and the standard deviation is 847.9041.
+The mean for acceleration is 15.56 and the standard deviation is 2.749995.
+The mean for year is 75.99 and the standard deviation is 3.690005.
+The mean for origin is 1.574 and the standard deviation is 0.8025495.
+
+## Part D
+```{r}
+Auto = Auto[-c(10:85), ]
+summary(Auto)
+sd(Auto$mpg)
+sd(Auto$cylinders)
+sd(Auto$displacement)
+sd(Auto$horsepower)
+sd(Auto$weight)
+sd(Auto$acceleration)
+sd(Auto$year)
+sd(Auto$origin)
+```
+
+The mean for mpg is 15.67 and the standard deviation is 1.658312.
+The mean for cylinders is 8 and the standard deviation is 0.
+The mean for displacement is 373.2 and the standard deviation is 69.48161
+The mean for horsepower is 177 and the standard deviation is 37.44663.
+The mean for weight is 3883 and the standard deviation is 458.2325.
+The mean for acceleration is 10.5 and the standard deviation is 1.25.
+The mean for year is 70 and the standard deviation is 0.
+The mean for origin is 1 and the standard deviation is 0.
+
+## Part E
+```{r}
+scatterplot(mpg ~ weight | cylinders, data = Auto, xlab="Weight of Car", ylab="Miles Per Gallon", 
+   main="Enhanced Scatter Plot")
+```
+
+As the weight of car increases, the miles per gallon decreases. Also there seems to be a correaltiong betwwen the acceleration and the year.
+
+## Part F
+
+Some variables that are able to predict mpg is the weight of the car. According to the graph above, there is a correlation between the weight of car and the miles per gallon of the car. 
+
+
+
+#### Theory Assignments
+
+## Problem 2.4.2
+
+# Part A
+This would be considered a supervised regression learning problem and are interested in the inference with n=500 and p=3.
+
+# Part B
+This is a supervised classification learning problem and would be interested in the prediction. The dimensions are n=1,000 and p = 1 for each restaurant. With the 1,000 ratings each restaurant receives, we can classify if the restaurant should be recommended or not.
+
+#Part C
+This is a supervised classification learning problem and we are interested in the prediction with p=13 and n=20.
+
+## Problem 2.4.7
+
+# Part A
+
+Euclidean distance in Observation 1 is 3, in Observation 2 it is 2, in Observation 3 it is 3.16, in Observation 4 it is 2.23, in Observation 5 it is 1.41, and in Observation 6 it is 1.73.
+
+# Part B
+
+Our prediction with K = 1 would be Green because the probability of green is greater than the probability of red.
+
+# Part C
+
+Our prediction with K=3 would be Red because P(Y=Red|X=x0) is 2/3 while the P(Y=Green|X=x0) is 1/3.
+
+# Part D
+
+As K becomes larger, the boundary becomes more linear; therefore, we would expect the value for K to be small.

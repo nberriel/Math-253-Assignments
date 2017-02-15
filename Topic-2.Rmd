@@ -1,2 +1,163 @@
 # Topic 2 Exercises: Linear Regression
 
+### Nadia BERRIEL
+
+###Homework 1 Due: February 16, 2017
+
+#### Computing Questions
+
+# Problem 3.6.1
+```{r}
+library(MASS)
+library(ISLR)
+```
+
+#Problem 3.6.2
+```{r}
+
+#fix(Boston)  #Doesn't work
+names(Boston)
+
+
+#lm.fit=lm(medv~lstat) #Doesn't work because R doesn't know where to find the variables.
+lm.fit = lm(medv~lstat, data = Boston)
+attach(Boston)
+
+lm.fit
+
+summary(lm.fit)
+
+names(lm.fit)
+
+confint(lm.fit)
+
+predict(lm.fit, data.frame(lstat=c(5,10,15)), interval ="confidence")
+
+plot(lstat, medv)
+
+abline(lm.fit)
+
+
+abline (lm.fit ,lwd =3)
+abline (lm.fit ,lwd=3,col ="red")
+plot(lstat ,medv ,col="red")
+plot(lstat ,medv ,pch =20)
+plot(lstat ,medv ,pch ="+")
+plot(1:20,1:20,pch =1:20)
+
+par(mfrow=c(2,2))
+plot(lm.fit)
+
+plot(predict (lm.fit), residuals (lm.fit))
+plot(predict (lm.fit), rstudent (lm.fit))
+
+plot(hatvalues (lm.fit))
+which.max(hatvalues (lm.fit))
+
+```
+
+#Problem 3.6.3
+```{r}
+lm.fit = lm(medv ~ lstat + age, data = Boston)
+summary(lm.fit)
+
+lm.fit=lm(medv ~.,data=Boston)
+summary (lm.fit)
+
+library(car)
+vif(lm.fit)
+
+lm.fit1=lm(medv ~.-age,data=Boston )
+summary (lm.fit1)
+
+lm.fit1=update(lm.fit, ~.-age)
+```
+
+#Problem 3.6.4
+```{r}
+summary (lm(medv~lstat*age ,data=Boston))
+```
+
+#Problem 3.6.5
+```{r}
+lm.fit2=lm(medv~lstat+I(lstat^2))
+summary(lm.fit2)
+
+lm.fit=lm(medv~lstat)
+anova(lm.fit,lm.fit2)
+
+par(mfrow=c(2,2))
+plot(lm.fit2)
+
+lm.fit5=lm(medv~poly(lstat,5))
+summary (lm.fit5)
+```
+
+#Problem 3.6.6
+```{r}
+fix(Carseats)
+names(Carseats)
+
+lm.fit=lm(Sales~.+Income:Advertising +Price:Age, data=Carseats)
+summary(lm.fit)
+
+attach(Carseats)
+contrasts(ShelveLoc)
+```
+
+#Problem. 3.6.7
+```{r}
+#Loaded LoadLibraries
+LoadLibraries()
+```
+
+#Problem 3.7.13
+
+See picture attached. 
+
+### Theory Problems/ Reading Questions
+
+#Page 66
+For Figure 3.1 we cannot assume that the errors εi for each observation are uncorrelated with common variance σ^2. Figure 3.1 is the fit is  by minimizing the sum of squared errors. In this case a linear fit captures the essence of the relationship, although it is somewhat deficient in the left of the plot. For these formulas to be strictly valid, we need to assume that the errors εi for each observation are uncorrelated with common variance σ2.
+
+#Page 77
+When the author stated that “... we cannot even fit the multiple regression models using least squares ….” he is referring to If p > n because then there are more coefficients βj to estimate than observations from which to estimate them.
+
+
+
+###Problem 3.7.3
+
+# Part A
+The correct answer is "For a fixed value of IQ and GPA, males earn more on average than females provided that the GPA is high enough." The general formula is yhat = 50 + 20GPA + 0.07IQ + 35Gender + 0.01GPA × IQ−10GPA × Gender. Differentiating on gender, males have yhat = 50 + 20GPA + 0.07IQ + 0.01GPA × IQ and women have
+yhat = 85 + 10GPA + 0.07IQ + 0.01GPA × IQ. When you solve for 50 + 20GPA ≥ 85 + 10GPA, men get paid more if they have a GPA higher than 3.5.
+
+# Part B
+
+The salary of a female with IQ of 110 and a GPA of 4.0 would be 137100 when you plug it in to the following equation: yhat = 85 + 40 + 7.7 + 4.4 = 137.1.
+
+# Part C
+
+False because the coefficient does not tell us anything about the impact on the quality of the model. In order to do so, we need to test the hypothesis and look at the p-value associated.
+
+
+#Problem 3.7.4
+
+# Part A
+
+If X and Y is linear, the least squares line might be close to the true regression line and therefore the RSS for the linear regression may be lower than for the cubic regression but we would need to know about the training data.
+
+# Part B
+
+We do not have enough information to conclude the test RSS depends upon the test data.
+
+# Part C
+
+Polynomial regression has lower train RSS than the linear fit because of higher flexibility.
+
+# Part D
+
+There is not enough information to tell which test RSS would be lower for either regression. If it is closer to linear than cubic, the linear regression test RSS could be lower than the cubic regression test RSS. If it is closer to cubic than linear, the cubic regression test RSS could be lower than the linear regression test RSS.
+
+
+
+

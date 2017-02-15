@@ -12,6 +12,11 @@ scoreActivity::score253(2)
 ## Task 1
 
 ```{r}
-download.file("http://www-bcf.usc.edu/~gareth/ISL/Auto.cvs", destfile = "Auto.csv")
+auto_file_name = download.file("https://www.bcf.usc.edu.edu/~gareth/ISL/Auto.csv", destfile = "Auto.csv")
+
 ```
+
+
+
+
 

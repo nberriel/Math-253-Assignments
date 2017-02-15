@@ -1,8 +1,34 @@
 # In-Class Programming Activity, Day 5
 
-Your work goes here ...
+##Nadia Berriel
 
+## Task 1 
 
+```{r}
+library(mosaicData)
+nbins = 10
+```
+
+## Task 2
+
+```{r}
+min(Galton$height)
+max(Galton$height)
+
+evenly_spaced = seq(56,79, 2.0909)
+```
+
+## Task 3
+```{r}
+bin_counts = table(Galton$height)
+print(bin_counts)
+```
+
+## Task 4
+```{r}
+xL = evenly_spaced[-1]
+hist_basics = data.frame(xL, xR, count)
+```
 
 ## Test statements
 
