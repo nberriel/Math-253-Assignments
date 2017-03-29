@@ -163,6 +163,3 @@ Polynomial regression has lower train RSS than the linear fit because of higher 
 
 There is not enough information to tell which test RSS would be lower for either regression. If it is closer to linear than cubic, the linear regression test RSS could be lower than the cubic regression test RSS. If it is closer to cubic than linear, the cubic regression test RSS could be lower than the linear regression test RSS.
 
-
-
-

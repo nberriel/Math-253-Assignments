@@ -1,8 +1,32 @@
 # In-Class Programming Activity, Day 6
 
-Your work goes here ...
+### Nadia Berriel
+
+## Task 1
+```{r}
+myHistogram <- function(){
+  hist()
+}
+```
+
+## Task 2
+```{r}
+v <- rnorm(10, mean=100, sd=1)
 
 
+Dvals <- outer(v, x, FUN = kernel)
+```
+
+## Task 3
+```{r}
+plotdensity <- function(v, data=parent.frame(), ...) {
+  v <- substitute(v) # a version of v that won't be evaluated until asked
+  vname <- as.character(v)
+  vvals <- eval(v, envir = data)
+  # Your statements go here. 
+  # Use vvals as the data and vname as the label for the x-axis
+}
+```
 
 ## Test statements
 

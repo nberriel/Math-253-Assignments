@@ -41,7 +41,7 @@ Parametric approaches are resitrictive, but fewer observations of underlying dat
 ## Part A
 ```{r}
 library(mosaicData)
-College
+
 ```
 
 ## Part B
