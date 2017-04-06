@@ -4,31 +4,133 @@
 
 ## Task 1
 ```{r}
-myHistogram <- function(){
-  hist()
+set.seed(101)
+n = 20
+X <- data.frame(vals = runif(n), 
+                group = as.character((1:n) %% 2))
+ggplot(head(X, 6), aes(x = vals)) + 
+  geom_density(bw = 1, position = "stack", aes(color = group, fill = group)) + 
+  geom_rug(aes(color = group)) + 
+ # facet_grid( . ~ group) +
+  xlim(-0.5, 1.5)
+
+library(mosaicData)
+data(Galton, package = "mosaicData")
+
+myHistogram <- function(values, fill ="purple"){
+  n <- 10
+  min <- min(values)
+  max <- max(values)
+  evenly_spaced <- seq(min, max, by=(max-min)/n)
+  bins <- cut(Galton$height, evenly_spaced)
+  bin_counts <- table(bins)
+  xL <- evenly_spaced[-length(evenly_spaced)]
+  xR <- evenly_spaced[-1]
+  count <- as.numeric(bin_counts)
+  hist_basics<- data.frame(xL, xR, count)
+  hist_finals <- one_to_five(hist_basics)
+  
+  ## Draw red density plot
+  ys <- 6*max(count)*dnorm(values, mean = mean(values), sd=sd(values))
+  
+  
+  plot(hist_finals,type = "n")
+  lines(hist_finals)
+  polygon(hist_finals, col = fill)
+  points(values, ys, col = "red", pch = "+")
+
+  
+  bin_counts
+} 
+
+make_one_bar <- function(point) {
+  xLeft <- point$xL
+  xRight <- point$xR
+  height <- point$count
+  res <- data.frame(
+              x = c(xLeft,  xLeft,  xRight, xRight, NA),
+              y = c(    0, height,  height,      0, NA)
+  )
+  res
 }
+
+one_to_five <- function(hist_data) {
+  bars <- NULL
+  for (k in 1:nrow(hist_data)) {
+    new_bar <- make_one_bar(hist_data[k, ])
+    bars <- rbind(bars, new_bar)
+  }
+  bars
+}
+
+values <- Galton$height
+myHistogram(values, fill = "blue")
+
 ```
 
-## Task 2
+
+##Task 2
+
 ```{r}
-v <- rnorm(10, mean=100, sd=1)
+v <- rnorm(10, mean = 100, sd =1)
+bandwidth <- diff(range(v))/sqrt(length(v))
+xs <- seq(min(v), max(v), bandwidth/10)
 
+kernel <- function(pt, x){
+  dnorm(x, mean = pt, sd = bandwidth)
+}
 
-Dvals <- outer(v, x, FUN = kernel)
+ys <- t(sapply(v,kernel, x = xs))
+density <- colSums(ys)/length(ys)
+
+df.plot <- data.frame(xs, density)
+plot(df.plot, type = "l", col="red")
+
 ```
 
 ## Task 3
+
 ```{r}
-plotdensity <- function(v, data=parent.frame(), ...) {
-  v <- substitute(v) # a version of v that won't be evaluated until asked
-  vname <- as.character(v)
-  vvals <- eval(v, envir = data)
-  # Your statements go here. 
-  # Use vvals as the data and vname as the label for the x-axis
+
+plotDensity <- function(v, xlim = NULL){
+  bandwidth <- diff(range(v))/sqrt(length(v))
+  xs <- seq(min(v), max(v), bandwidth/10)
+  ys <- t(sapply(v,kernel, x = xs))
+  density <- colSums(ys)/length(ys)
+  df.plot <- data.frame(xs, density)
+  plot(df.plot, type = "l", col="blue", xlim= xlim) 
+  
+  invisible(df.plot)
 }
+
+kernel <- function(pt, x){
+  dnorm(x, mean = pt, sd = bandwidth)
+}
+
+plotDensity(v, xlim=c(95,105))
 ```
 
-## Test statements
+## Above and Beyond
+```{r}
+plotDensity <- function(v, data=parent.frame(), xlim=NULL,...){
+  v <- substitute(v)
+  vname <- as.character(v)
+  vvals <- eval(v, envir = data)
+  bandwidth <- diff(range(vvals))/sqrt(length(vvals))
+  xs <- seq(min(vvals), max(vvals), bandwidth/10)
+  ys <- t(sapply(vvals,kernel, x = xs))
+  density <- colSums(ys)/length(ys)
+  df.plot <- data.frame(xs, density)
+  plot(df.plot, type = "l", col="green", xlim= xlim, xlab=vname) 
+  invisible(df.plot)
+}
+
+kernel <- function(pt, x){
+  dnorm(x, mean = pt, sd = bandwidth)
+}
+
+plotDensity(height, data = Galton)
+```
 
 ```{r}
 scoreActivity::score253(6)

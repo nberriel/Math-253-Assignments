@@ -1,8 +1,49 @@
 # In-Class Programming Activity, Day 7
 
-Your work goes here ...
+### Nadia Berriel
 
+## Task 1
+```{r}
+set.seed(101)
+vals <- rexp(10, rate = 1/100)
+print(vals)
+```
 
+## Task 2
+```{r}
+test200 = sum(log(dexp(vals, rate = 1/200)))
+
+```
+
+## Task 3
+```{r}
+LL_exp = function(rate){
+  sum(log(dexp(vals,rate)))
+}
+```
+
+## Task 4
+```{r}
+rates = c(runif(100, 1/200,1/50))
+print(rates)
+```
+
+## Task 5
+```{r}
+results <- sapply(rates,LL_exp)
+```
+
+## Task 6
+```{r}
+plot(results,1/rates)
+```
+
+## Task 7
+```{r}
+exp_results <- optimize(LL_exp, 
+                        lower=1/200, upper=1/50,
+                        maximum = TRUE)
+```
 
 ## Test statements
 
