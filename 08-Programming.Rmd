@@ -1,8 +1,44 @@
 # In-Class Programming Activity, Day 8
 
-Your work goes here ...
+### Nadia Berriel
+
+## Task 1
+```{r}
+x = runif(100, 20, 70)
+y = 5 + 3*x + 2*rnorm(100)
+My_data = data.frame(x,y)
+plot(My_data)
+
+LL_line = function(params){
+  params = c(m,b,sigma)
+  sum(log(dnorm(y - (m * x + b), sd = sigma)))
+}
+
+params1 = c(3,5,2)
+testA = LL_line(params1)
+print(testA)
+params2 = c(4,1,10)
+testB= LL_line(params2)
+print(testB)
+
+starting_params <- c(4, 1, 10)
+best <- optim(starting_params, LL_line, control = list(fnscale = -1))
+```
+
+## Task 2
+```{r}
+load(url("http://tiny.cc/dcf/Taxi_trips.rda"))
 
 
+waiting_fare <- Taxi_trips$fare_amount - (Taxi_trips$base_fare + Taxi_trips$per_mile*Taxi_trips$trip_distance)
+
+taxi_likelihood <- function(vec){
+  vec = c(base_fare = 2.00, per_mile = 4.00, params = 1/3)
+}
+
+plot(fare_amount~trip_distance, data = Taxi_trips)
+abline(Taxi_trips$base_fare, Taxi_trips$per_mile)
+```
 
 ## Test statements
 
