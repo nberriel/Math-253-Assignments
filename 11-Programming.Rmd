@@ -1,7 +1,50 @@
 # In-Class Programming Activity, Day 11
 
-Your work goes here ...
+###Nadia Berriel
 
+#Matrices and their inverses
+```{r}
+Sigma = matrix(c(1.0,-0.7,-0.7,1.0),nrow = 2, ncol=2)
+Sigma_inv = solve(Sigma)
+print(Sigma_inv)
+
+test_inverse = Sigma %*% Sigma_inv
+```
+
+#Matrix Composition
+```{r}
+A = chol(Sigma)
+print(A)
+
+print(t(A))
+
+```
+
+#Orthogonal vectors and matrices
+```{r}
+x1 = cbind(rnorm(10))
+x2 = cbind(rnorm(10))
+
+X = cbind(x1,x2)
+#X_cov = (t(X) * X)/nrow(X)
+
+w1 = cbind(rnorm(10))
+w2 = cbind(rnorm(10))
+W = cbind(w1,w2)
+#W_cov = (t(W) * W)/nrow(W)
+
+```
+
+#Generating correlated random vectors
+```{r}
+A_inv = chol(Sigma)
+#Y = X * A
+
+#Y = W * A
+
+
+
+```
 
 
 ## Test statements
