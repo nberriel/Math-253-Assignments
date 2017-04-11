@@ -1,0 +1,129 @@
+## Math 365 / Comp 365: Midterm 2
+## Take-Home Portion
+### **Due Tuesday, April 11, 2017 at 8AM on Moodle**
+#### *Please bring a stapled hard copy of your answers to class on Tuesday*
+#### *Don't forget to sign and attach the cover sheet or copy the honor statement and sign electronically here*
+
+### *NADIA BERRIEL*
+
+The following line sources functions from the class file `365Functions.r`. Feel free to use any of these functions.
+```{r,message=FALSE,warning=FALSE}
+require(Matrix)
+require(ggplot2)
+require(tidyr)
+source("https://www.macalester.edu/~dshuman1/data/365/365Functions.r")
+source("https://www.macalester.edu/~dshuman1/data/365/panera.prices.r")
+```
+
+## Problem 5
+
+Here is a plot of the data we have. Note: the prices are stored in `samp.prices`.
+
+```{r}
+days = 0:250 
+samp.days = seq(0,250,by=10) # we only have data on these days
+plot(samp.days,samp.prices,pch=20,cex=.5,ylim=c(180,280),
+     ylab = "PNRA Closing Price",
+     xlab = "Consecutive trading days up to 3/31/17",
+     main = "Panera Stock Prices")
+points(samp.days,samp.prices,pch=20,cex=1,col='red')
+grid()
+```
+
+Here is the function we are going to use to plot the different interpolations and regression models:
+```{r}
+plotApproximations=function(f){
+  tt = seq(0,250,length=1001)
+  plot(tt,f(tt),col="DarkOrange",type='l',lwd=2,ylim=c(180,280),
+       ylab = "PNRA Closing Price",
+       xlab = "Consecutive trading days up to 3/31/17",
+       main = "Panera Stock Prices")
+  points(days,f(days),pch=20,cex=1,col='black') # The points guessed by the interpolating/regressing functions
+  points(samp.days,samp.prices,pch=20,cex=1,col='red') # The sample points we have from every 10th day
+}  
+```
+
+
+#### Part a: Polynomial Interpolation
+
+```{r}
+p <- function(){
+  plot(x,y,pch=19,col='dodger')
+}
+
+plotApproximations(p)
+```
+
+#### Part b: Natural Cubic Spline
+
+
+```{r}
+sp <- function(){
+  # I am using the line and spline function to draw the lines between the data points.
+  lines(spline(samp.days,samp.prices, n = 1000, method = 'natural'), col='seagreen4')
+}
+
+plotApproximations(sp)
+```
+
+#### Part c: Linear Regression
+
+
+
+```
+Do some computations here to compute a function `f` that is your regression line
+```
+
+Then call this function to plot the given data and your regression line:
+```
+plotApproximations(f)
+```
+
+#### Part d: Compute the Errors
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Problem 6
+
+### Part a: Monomials
+
+```{r}
+y<-function(t){2*cos(4*t)}
+tt<-seq(0,pi/2,length=1000)
+```
+
+#### Part i
+```
+N<-4
+A<-
+b<-
+print(A)
+print(b)
+```
+
+#### Part ii
+```
+y.approx<-function(t){
+# fill in code here
+}
+plot(tt,y(tt),type='l',col="blue",lwd=3,ylab = "y(t)",xlab="t")
+lines(tt,y.approx(tt),type='l',col="red",lwd=3)
+grid()
+```
+
+#### Part iii: experiment with different values of N
+
+### Part b: Piecewise-Linear B-Splines

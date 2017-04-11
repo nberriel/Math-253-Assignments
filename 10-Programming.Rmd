@@ -1,6 +1,49 @@
 # In-Class Programming Activity, Day 10
 
-Your work goes here ...
+###Nadia Berriel
+
+#The logistic function
+```{r}
+logistic <- function(x){
+  exp(x) / (1 + exp(x))
+}
+```
+
+#Linear Combinations
+```{r}
+linear_combine <- function(data, coefs){
+  data = data.frame()
+  coefs = c(intercept,balance,income)
+  result <- 0
+  for (nm in names(coefs)){
+    if (nm == "intercept"){
+      result <- result + coefs[[nm]]
+    }else{
+      result <-result + coefs[[nm]] * data[[nm]]
+    }
+  }
+}
+```
+
+#Probabilities
+```{r}
+LL_logistic <- function(data,coefs,outcome){
+  data = Default
+  coefs = c(intercept,balance,income)
+  outcome = Default$default == "Yes"
+}
+```
+
+#Optimize
+```{r}
+optim()
+
+best_coefs = 
+  
+```
+
+
+
 
 
 
