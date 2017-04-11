@@ -36,10 +36,10 @@ LL_logistic <- function(data,coefs,outcome){
 
 #Optimize
 ```{r}
-optim()
+#best_coeffs = optim(par = c(0,1), linear_combine, data = Default)
+#best_coeffs
+glm(default == "Yes" ~ income, data=Default, family="binomial")
 
-best_coefs = 
-  
 ```
 
 
