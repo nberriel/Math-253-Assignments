@@ -4,7 +4,7 @@
 
 #The logistic function
 ```{r}
-logistic <- function(x){
+logistic <- function(x){ 
   exp(x) / (1 + exp(x))
 }
 ```

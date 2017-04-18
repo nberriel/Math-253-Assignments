@@ -1,7 +1,7 @@
 # In-Class Programming Activity, Day 13
 
 ###NADIA BERRIEL
-
+  
 #Function framework
 ```{r}
 k_fold1 <- function(formula, method = lm, data = mtcars, predfun = predict, k = 10) {
