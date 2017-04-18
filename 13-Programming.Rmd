@@ -1,6 +1,52 @@
 # In-Class Programming Activity, Day 13
 
-Your work goes here ...
+###NADIA BERRIEL
+
+#Function framework
+```{r}
+k_fold1 <- function(formula, method = lm, data = mtcars, predfun = predict, k = 10) {
+  # do the calculations, 
+  # producing an estimate of error
+  k <- 10
+  sets <- rep(1:k, each = 51/k,
+              length.out = 51)
+  mspe <- numeric(k)
+  xy <- res <- list()
+  For_testing <- gen_data(n_test, beta, sigma_eps)
+  for (i in 1:k) {     
+    mspe[i] <- gen_data(n_train, beta, sigma_eps)
+    x <- xy[[i]][, "x"]
+    y <- xy[[i]][, "y"]
+    res[[i]] <- apply(t(df), 2, function(degf) lm(mpg ~ hp + wt + am(x, df = degf)))
+      }
+  mean(mspe)
+  return(error_estimate)
+}
+
+```
+
+#Generalizing the function
+```{r}
+k_fold <- function(formula, method=lm, data=mtcars,predfun=predict, k=10){
+  k <- 10
+  sets <- rep(1:k, each = 51/k,
+              length.out = 51)
+  mspe <- numeric(k)
+  xy <- res <- list()
+  For_testing <- gen_data(n_test, beta, sigma_eps)
+  for (i in 1:k) {     
+    mspe[i] <- gen_data(n_train, beta, sigma_eps)
+    x <- xy[[i]][, "x"]
+    y <- xy[[i]][, "y"]
+    res[[i]] <- apply(t(df), 2, function(degf) method(formula()))
+      }
+  mean(mspe)
+  return(error_estimate)
+}
+
+k_fold(formula = mpg ~ hp + wt + am, data=mtcars)
+
+```
 
 
 

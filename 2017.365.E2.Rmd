@@ -47,51 +47,59 @@ plotApproximations=function(f){
 #### Part a: Polynomial Interpolation
 
 ```{r}
-p <- function(){
-  plot(x,y,pch=19,col='dodger')
-}
+#p <- function(){
+#  lines(samp.days[order(samp.days)],samp.prices[order(samp.days)],xlim=range(samp.days),ylim=range(samp.prices), pch=16)
+#}
 
-plotApproximations(p)
+#plotApproximations(p)
+#Error in f(tt): unused argument (tt)
 ```
 
 #### Part b: Natural Cubic Spline
 
 
 ```{r}
-sp <- function(){
+#sp <- function(){
   # I am using the line and spline function to draw the lines between the data points.
-  lines(spline(samp.days,samp.prices, n = 1000, method = 'natural'), col='seagreen4')
-}
+  #lines(spline(samp.days,samp.prices, n = 1000, method = 'natural'), col='seagreen4')
+#}
 
-plotApproximations(sp)
+#plotApproximations(sp)
+#Error in f(tt): unused argument (tt)
+
 ```
 
 #### Part c: Linear Regression
 
+```{r}
+#Do some computations here to compute a function `f` that is your regression line
+#Then call this function to plot the given data and your regression line:
 
+#I do not know how to fit a regression line 
+#f <- function(){
+  #plot(samp.days,samp.prices)
+  #fit <- lm(samp.prices ~ samp.days)
+  #abline(fit)
+#}
 
-```
-Do some computations here to compute a function `f` that is your regression line
-```
-
-Then call this function to plot the given data and your regression line:
-```
-plotApproximations(f)
+#plotApproximations(f)
 ```
 
 #### Part d: Compute the Errors
 
+In order to compute the squared error we need to 1) Find the regression line, 2) Insert your X values into the linear regression equation to find the new Y values (Y'), 3) Subtract the new Y value from the original to get the error, 4) Square the errors, 5) Add up the errors, and then 6) Find the mean.
 
+```{r}
+#lm <- lm(samp.prices ~ samp.days)
+#sm <- summary(lm)
+#sm
 
+#lm2 <- lm(all.prices ~ samp.days)
+#sm2 <- summary(lm2)
+#sm2
+```
 
-
-
-
-
-
-
-
-
+The Least Square method provides the best fit for the data.
 
 
 
@@ -106,24 +114,45 @@ tt<-seq(0,pi/2,length=1000)
 ```
 
 #### Part i
-```
+```{r}
+#added all the linear equations in 5,6,7.
+y0 <- function(j){sum(cj* 0^(j-1),1,N)}
+ypi <- function(j){sum(cj(pi/2)^(j-1))}
+con <- function(j){sum(cj*((j-1)*(j-2)*t^(j-3)+16*t^(j-1)))}
 N<-4
-A<-
-b<-
+A<- matrix(c(y0,ypi,con))
+b<- c(0,pi/2)
 print(A)
 print(b)
 ```
 
 #### Part ii
-```
+```{r}
+#I couldn't figure out how to do Part a, so now I can't do part b. I don't think I am suppose to use the sum() and probably didn't need to write out the functions. Would I have to use the funcitons 1,2, and 3 then?
 y.approx<-function(t){
-# fill in code here
+  #
 }
 plot(tt,y(tt),type='l',col="blue",lwd=3,ylab = "y(t)",xlab="t")
 lines(tt,y.approx(tt),type='l',col="red",lwd=3)
 grid()
 ```
 
-#### Part iii: experiment with different values of N
-
 ### Part b: Piecewise-Linear B-Splines
+```{r}
+##First I would have to find the matrix A and values for b. 
+#a <- function(h){(-32/3)*h + (2/h)}
+#B <- function(h){(-8/3)*h - (1/h)}
+#diag(a) # for the matrix
+
+
+```
+
+
+
+
+
+
+
+
+
+
