@@ -1,7 +1,38 @@
 # In-Class Programming Activity, Day 14
 
-Your work goes here ...
+# NADIA BERRIEL
 
+```{r}
+GenCont <- read.csv("http://tiny.cc/dcf/GenCont.csv")
+```
+
+#Comparing OLS to ridge
+```{r}
+compare_ols_ridge <- function(responses, predictors, lambda=1){
+  n_obs <- dim(GenCont)[1]
+  proportion_split = 0.5
+  train_index <- sample(1:n_obs, round(n_obs * proportion_split))
+  y = GenCont$Phenotypes
+  x = as.matrix(GenCont[setdiff(colnames(GenCont), "lpsa")])
+  xtr = x[train_index,]
+  xte = x[-train_index,]
+  ytr = y[train_index]
+  yte = y[-train_index]
+  ols = lm(ytr ~ xtr)
+  lasso = cv.glmnet(xtr,ytr, alpha = 1)
+  ridge = cv.glmnet(xtr, ytr, alpha = 0)
+  y_hat_old = cbind(rep(1,n_obs ~ length(train_index)), xte) %*% coef(ols)
+  y_hat_lasso = predict(lasso, xte)
+  y_hat_ridge = predict(ridge, xte)
+  ## compare
+  sum((yte - y_hat_ols)^2)
+  sum((yte - y_hat_lasso)^2)
+  sum((yte - y_hat_ridge)^2)
+
+}
+
+Shrink_results = 1
+```
 
 
 ## Test statements
