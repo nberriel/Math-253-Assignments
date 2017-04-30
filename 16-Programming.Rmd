@@ -1,7 +1,157 @@
 # In-Class Programming Activity, Day 16
 
-Your work goes here ...
+```{r}
+library(ISLR)
+```
 
+## The Knots
+Write function my_knots
+```{r}
+my_knots <- function(x, k) {
+  knots <- numeric(k)
+  for (i in 1:k){
+    knots[i] <- quantile(x, i/(k+1))
+  }
+  return(knots)
+}
+```
+
+## The basis set
+Write a function to calculate model matrix for x and knot locations
+```{r}
+spline_model_matrix <- function(x, knot_locations) {
+  MM <- cbind(1, x, x^2, x^3)
+  for (i in 1:length(knot_locations)){
+    new_v <- ifelse(x>knot_locations[i], (x-knot_locations[i])^3,0)
+    MM <- cbind(MM, new_v)
+  }
+  return(MM)
+}
+```
+
+## Finding the best linear computation
+```{r}
+
+fit_spline <- function(formula, k=2, data=parent.frame()){
+  y <- eval(formula[[2]], envir=data)
+  x <- eval(formula[[3]], envir=data)
+  knot_locations <- my_knots(x,k)
+  MM <- spline_model_matrix(x, knot_locations)
+  mod <- lm(y~ MM - 1)
+  res <- list(coef = coef(mod), knots = knot_locations, cov=vcov(mod), rse=summary(mod)$sigma)
+  class(res) <- "my_spline"
+  
+  return(res)
+}
+```
+
+## The predict function
+
+```{r}
+predict.my_spline <- function(mod, newx, level= 0.95, intervals=c("none","confidence","prediction")) {
+  intervals <- match.arg(intervals)
+  MM <- spline_model_matrix(newx, mod$knots)
+  vals <- MM %*% mod$coef
+  se <- sqrt(rowSums(MM %*% mod$cov * MM))
+  if (intervals == "none") return(vals)
+  else return(NULL)
+}
+```
+
+```{r}
+mod <- fit_spline(wage~age, data = Wage) # Return 2 values ??
+mod_pred <- predict(mod,newx=Wage$age, intervals="none") 
+library(ggplot2)
+ggplot(Wage, aes(age,wage)) + geom_point(aes(alpha=1/10)) + geom_smooth(aes(age,mod_pred))
+```
+
+## Confidence intervals
+
+```{r}
+predict.my_spline <- function(mod, newx, level= 0.95, intervals=c("none","confidence","prediction")) {
+  intervals <- match.arg(intervals)
+  MM <- spline_model_matrix(newx, mod$knots)
+  vals <- MM %*% mod$coef
+  se <- sqrt(rowSums(MM %*% mod$cov * MM))
+  if (intervals == "none") return(vals)
+  else if (intervals == "confidence"){
+    upper <- vals + 2*se
+    lower <- vals - 2*se
+    return(data.frame(vals=vals, upper=upper, lower=lower))
+  }
+  else return(NULL)
+}
+```
+
+Graph the predicted splines
+
+```{r}
+mod_pred <- predict(mod,newx=Wage$age, intervals="confidence")
+ggplot(Wage, aes(age,wage)) + geom_point(aes(alpha=1/10)) + geom_smooth(aes(age,mod_pred$vals)) + geom_smooth(aes(age, mod_pred$upper, colour="red")) + geom_smooth(aes(age, mod_pred$lower, colour="red"))
+```
+
+## Prediction intervals (Is this correct???)
+```{r}
+predict.my_spline <- function(mod, newx, level= 0.95, intervals=c("none","confidence","prediction")) {
+  intervals <- match.arg(intervals)
+  MM <- spline_model_matrix(newx, mod$knots)
+  vals <- MM %*% mod$coef
+  se <- sqrt(rowSums(MM %*% mod$cov * MM))
+  if (intervals == "none") return(vals)
+  else if (intervals == "confidence"){
+    upper <- vals + 2*se
+    lower <- vals - 2*se
+    return(data.frame(vals=vals, upper=upper, lower=lower))
+  }
+  else if (intervals == "prediction"){
+    se_pred <- sqrt(se^2 + mod$rse^2)
+    lower <- vals - 2*se_pred
+    upper <- vals + 2*se_pred
+    return(data.frame(lower=lower, vals=vals, upper=upper))
+  }
+  else return(NULL)
+}
+```
+
+```{r}
+mod <- fit_spline(wage~age, data = Wage)
+mod_pred <- predict(mod,newx=Wage$age, intervals="prediction")
+ggplot(Wage, aes(age,wage)) + geom_point(aes(alpha=1/10)) + geom_smooth(aes(age,mod_pred$vals)) + geom_smooth(aes(age, mod_pred$upper, colour="red")) + geom_smooth(aes(age, mod_pred$lower, colour="red"))
+```
+
+
+Difference between confidence interval and prediction intervals?
+
+## How many knots?
+```{r}
+knots <- c(2,5, 10,20)
+for (k in knots){
+  mod <- fit_spline(wage~age, data=Wage, k=k)
+  mod_pred <- predict(mod, newx = Wage$age, interval="none")
+  print(mean((Wage$wage - mod_pred)^2))
+}
+```
+
+As number of knots increases, the model fits the data more closely.
+
+```{r}
+set.seed(6)
+trains <- sample(1:nrow(Wage), nrow(Wage)/2)
+Train <- Wage[trains,]
+Test <- Wage[-trains,]
+
+knots <- seq(2,20,1)
+mse <- numeric(length(knots))
+for (i in 1:length(knots)){
+  mod <- fit_spline(wage~age, data=Train, k=knots[i])
+  mod_pred <- predict(mod, newx = Test$age, interval="none")
+  mse[i] <- mean((Test$wage - mod_pred)^2)
+}
+
+plot(knots, mse)
+```
+
+Around 5 knots.
 
 
 ## Test statements

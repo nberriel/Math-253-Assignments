@@ -2,50 +2,90 @@
 
 ###Nadia Berriel 
 
-#The logistic function
+# In-Class Programming Activity, Day 10
+
 ```{r}
-logistic <- function(x){ 
-  exp(x) / (1 + exp(x))
+library(ISLR)
+```
+## Logistic Function
+
+```{r}
+logistic <- function(x){
+  result <- exp(x)/(1+exp(x))
+  return(result)
 }
 ```
 
-#Linear Combinations
+## Linear Combination
+
+A function to calculate linear combinations of variables in a given dataset.
+
 ```{r}
-linear_combine <- function(data, coefs){
-  data = data.frame()
-  coefs = c(intercept,balance,income)
+linear_combine <- function(coefs, data){
   result <- 0
   for (nm in names(coefs)){
     if (nm == "intercept"){
       result <- result + coefs[[nm]]
-    }else{
-      result <-result + coefs[[nm]] * data[[nm]]
+    }else if (is.null(data[[nm]])){
+      stop()
+    }else {
+      result <- result + coefs[[nm]] * data[[nm]]
     }
   }
+  return (result)
 }
+
+head(linear_combine(data = Default, coefs = c(intercept=3, balance=0.00001, income=-0.0002)))
 ```
 
-#Probabilities
+
+## Probabilities
+
+A logistic function that computes log-likelihood of the data given the coefficients
+
 ```{r}
-LL_logistic <- function(data,coefs,outcome){
-  data = Default
-  coefs = c(intercept,balance,income)
-  outcome = Default$default == "Yes"
+LL_logistic <- function(coefs, data,  outcome){
+  result_1 <- linear_combine(data = data, coefs = coefs)
+  result_2 <- logistic(result_1)
+  likelihood <- ifelse(outcome == TRUE, result_2, 1-result_2)
+  log_likelihood <- sum(log(likelihood))
+  return (log_likelihood)
 }
+
+LL_logistic(data=Default, 
+            coefs = c(intercept = 1, income = -0.0001), 
+            outcome = Default$default == "Yes")
+
 ```
 
-#Optimize
+## Optimize
+
 ```{r}
-#best_coeffs = optim(par = c(0,1), linear_combine, data = Default)
-#best_coeffs
+starting_params <- c(intercept =1, income=-0.0001)
+best_coefs <- optim(starting_params, LL_logistic, data=Default, outcome=Default$default=="Yes", control = list(fnscale = -1))
+best_coefs
+
 glm(default == "Yes" ~ income, data=Default, family="binomial")
-
 ```
 
+The two functions give similar estimates of intercept and coeficient of income.
 
+## Above and Beyond
+```{r}
+LL_logistic <- function(data=NULL, coefs=NULL, outcome){
+  outcome_statement <- substitute(outcome)
+  outcome <- eval(outcome_statement, envir = data)
+  result_1 <- linear_combine(data = data, coefs = coefs)
+  result_2 <- logistic(result_1)
+  likelihood <- ifelse(outcome == TRUE, result_2, 1-result_2)
+  log_likelihood <- sum(log(likelihood))
+  return (log_likelihood)
+}
 
-
-
+LL_logistic(data=Default, 
+            coefs = c(intercept = 1, income = -0.0001), 
+            outcome = default == "Yes")
+```
 
 ## Test statements
 

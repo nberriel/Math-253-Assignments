@@ -1,6 +1,90 @@
 # In-Class Programming Activity, Day 15
 
-Your work goes here ...
+#Nadia Berriel
+
+Make input matrix X (191 columns and 250 row in this case for Mona Lisa)
+```{r}
+load("mona.rda")
+X <- t(mona) - mean(mona[]) #monochrome version of Mona Lisa
+X_rand <- matrix(rnorm(191*250), nrow = 250, ncol = 191) #random iid noise
+X_corr <- X_rand %*% chol(var(X)) #correlated noise
+```
+
+###Sparse data
+
+```{r}
+beta <- rep(0, 191)
+inds <- sample(1:191, size=16)
+beta[inds[1:4]] = 2
+beta[inds[5:8]] = 5
+beta[inds[9:12]] = -3
+beta[inds[13:16]] = -5
+```
+
+###The output
+
+```{r}
+Y_pure <- X %*% beta
+Y_real <- Y_pure + rnorm(250, mean=0, sd=sqrt(0.1*var(Y_pure)))
+```
+
+
+###Least squares
+
+```{r}
+mod_pure <- lm(Y_pure ~ X)
+beta_hat_pure <- coef(mod_pure)[-1]
+plot(beta, beta_hat_pure)
+mod_real <- lm(Y_real ~ X)
+beta_hat_real <- coef(mod_real)[-1]
+plot(beta, beta_hat_real)
+```
+
+Many coefficients that should be 0 are not 0 in beta_hat_real. So can't really tell beta is sparse from beta_hat_real.
+
+###The Lasso
+
+```{r}
+library(glmnet)
+lasso_mod <- cv.glmnet(X, Y_real, alpha=1)
+beta_lasso <- predict(lasso_mod, type = "coefficients", s=lasso_mod$lambda.min)
+plot(beta, beta_lasso[-1])
+```
+
+Fewer coefficients that are off at 0.
+
+###Principal components
+
+```{r}
+sing_vals_X <- svd(X)$d
+sing_vals_Xrand <- svd(X_rand)$d
+sing_vals_Xcorr <- svd(X_corr)$d
+R_X <- cumsum(sing_vals_X^2)/sum(sing_vals_X^2)
+R_Xrand <- cumsum(sing_vals_Xrand^2)/sum(sing_vals_Xrand^2)
+R_Xcorr <- cumsum(sing_vals_Xcorr^2)/sum(sing_vals_Xcorr^2)
+k <- seq(1,191)
+Prin_Comp <- data.frame(cbind(k, R_X, R_Xrand, R_Xcorr))
+library(tidyr)
+library(ggplot2)
+Prin_Comp_data <- gather(Prin_Comp, key=data, value=r_sqr, -k)
+ggplot(Prin_Comp_data, aes(k, r_sqr)) + geom_point(aes(colour=data))
+n99 <- Prin_Comp[R_X >=0.99,][1,1]
+n99_rand <- Prin_Comp[R_Xrand >=0.99,][1,1]
+n99_corr <- Prin_Comp[R_Xcorr >=0.99,][1,1]
+```
+
+
+```{r}
+library(pls)
+pcr.fit <- pcr(Y_real ~ X, scale = T, validation="CV")
+R2(pcr.fit)
+```
+
+After 50 components, R^2 comes closest to 0.85. However, after 14 components there doesn't seem to be much increase.
+
+
+
+
 
 
 

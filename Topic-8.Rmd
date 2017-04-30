@@ -1,2 +1,111 @@
 # Topic 8 Exercises: Tree-based models
 
+###NADIA BERRIEL
+
+## 8.4.12
+
+The SAT dataset from mosaicData package is used.
+```{r}
+set.seed(6)
+library(mosaicData)
+library(ISLR)
+library(randomForest)
+library(gbm)
+train <- sample(1:nrow(SAT), size=nrow(SAT)/2)
+test <- SAT$sat[-train]
+```
+
+Bagging:
+```{r}
+bag_mod <- randomForest(sat~., data=SAT, subset=train, mtry=ncol(SAT)-1, importance=TRUE)
+bag_pred <- predict(bag_mod, newdata=SAT[-train,])
+plot(bag_pred, test)
+abline(0,1)
+mean((bag_pred - test)^2)
+```
+
+Random Forest:
+```{r}
+rf_mod <- randomForest(sat~., data=SAT, subset=train, mtry=(ncol(SAT)-1)/2, importance=TRUE)
+rf_pred <- predict(rf_mod, newdata=SAT[-train,])
+plot(rf_pred, test)
+abline(0,1)
+mean((rf_pred - test)^2)
+importance(rf_mod)
+```
+
+Boosting:
+```{r}
+boost_mod <- gbm(sat~., data=SAT[train,], distribution="gaussian", n.trees=1000, interaction.depth=3, n.minobsinnode =3)
+summary(boost_mod)
+boost_pred <- predict(boost_mod, newdata = SAT[-train,], n.trees = 1000)
+mean((boost_pred - SAT$sat[-train])^2)
+```
+
+Linear Regression:
+```{r}
+lm <- lm(sat~., data=SAT)
+lm_pred <- predict(lm, newdata=SAT)
+mean((lm_pred - test)^2)
+```
+
+Linear regression is not a good model to compare here because there is only one observation for each state, so I couldn't create a training and testing set. The error above is the in-sample error. Beacause there are too few observations, boosting doesn't work very well. Random Forest performs best with the lowest testing error.
+
+
+## 8.4.1
+
+                 [X1 < 10]
+           |                |
+        [X2<500]          [X1<50]
+        |       |        |        |
+    [X1<2]      R3    [X2<700]    R6
+    |    |            |      |
+    R1   R2           R4     R5
+    
+## 8.4.2
+
+(8.12) boosted model = sum of lambda times f of x for b from 1 to B.
+
+So (8.12) includes the sum of all B distinct trees. A stump has one single split with one variable. Thus, there will only be p distinct trees to sum over in an additive model
+
+## 8.4.3
+
+```{r}
+gini <- function(p){
+  return(1 - (p^2 + (1-p)^2)) 
+}
+cross_entropy <- function(p){
+  return(-p *log2(p) - (1-p)*log2(1-p))
+}
+class_err <- function(p){
+  return(1-max(p, 1-p))
+}
+
+g <- numeric(51)
+cre <- numeric(51)
+cle <- numeric(51)
+for (i in 1:51){
+  p <- 1/50*(i-1)
+  g[i] <- gini(p)
+  cre[i] <- cross_entropy(p)
+  cle[i] <- class_err(p)
+}
+
+plot(seq(0,1,1/50), g, type = "l", col="red", ylim=c(0,1))
+lines(seq(0,1,1/50), cre, col="green")
+lines(seq(0,1,1/50), cle, col="blue")
+```
+
+## 8.4.4
+
+a.  
+![Fig 1](Topic8.4.4a.PNG)
+
+           
+b. 
+
+![Fig 2](Topic8.4.4b.PNG)
+
+
+## 8.4.5
+The average probability is 0.45. So X will be classified as Green

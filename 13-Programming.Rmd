@@ -2,49 +2,78 @@
 
 ###NADIA BERRIEL
   
-#Function framework
 ```{r}
-k_fold1 <- function(formula, method = lm, data = mtcars, predfun = predict, k = 10) {
-  # do the calculations, 
-  # producing an estimate of error
-  k <- 10
-  sets <- rep(1:k, each = 51/k,
-              length.out = 51)
-  mspe <- numeric(k)
-  xy <- res <- list()
-  For_testing <- gen_data(n_test, beta, sigma_eps)
-  for (i in 1:k) {     
-    mspe[i] <- gen_data(n_train, beta, sigma_eps)
-    x <- xy[[i]][, "x"]
-    y <- xy[[i]][, "y"]
-    res[[i]] <- apply(t(df), 2, function(degf) lm(mpg ~ hp + wt + am(x, df = degf)))
-      }
-  mean(mspe)
-  return(error_estimate)
+library(glmnet)
+GenCont <- read.csv("http://tiny.cc/dcf/GenCont.csv")
+```
+
+```{r}
+compare_ols_ridge <- function(responses, predictors, lambda) {
+  set.seed(768)
+  inds <- sample(length(responses), size = length(responses)/2)
+  
+  x_train <- predictors[inds,] #predictors
+  y_train <- responses[inds] # response
+  x_test <- predictors[-inds,]
+  y_test <- predictors[-inds]
+  
+  linear_mod <- lm(y_train ~ as.matrix(x_train))
+  linear_pred <- predict(linear_mod, newx = x_train)
+  ols_in <- mean((y_train - linear_pred)^2)
+  linear_pred_2 <- predict(linear_mod, newx = x_test)
+  ols_out <- mean((y_test - linear_pred_2)^2)
+  
+  ridge_mod <- glmnet(as.matrix(x_train), y_train, alpha=0, lambda = lambda)
+  ridge_pred <- predict(ridge_mod, s=0, newx = as.matrix(x_train))
+  ridge_in <- mean((y_train - ridge_pred)^2)
+  ridge_pred_2 <- predict(ridge_mod, s=0, newx = as.matrix(x_test))
+  ridge_out <- mean((y_test- ridge_pred_2)^2)
+  
+  result <- c(lambda, ols_in, ridge_in, ols_out, ridge_out)
+  names(result) <- c("lambda","ols_in","ridge_in","ols_out", "ridge_out")
+  
+  return(result)
 }
 
 ```
 
-#Generalizing the function
 ```{r}
-k_fold <- function(formula, method=lm, data=mtcars,predfun=predict, k=10){
-  k <- 10
-  sets <- rep(1:k, each = 51/k,
-              length.out = 51)
-  mspe <- numeric(k)
-  xy <- res <- list()
-  For_testing <- gen_data(n_test, beta, sigma_eps)
-  for (i in 1:k) {     
-    mspe[i] <- gen_data(n_train, beta, sigma_eps)
-    x <- xy[[i]][, "x"]
-    y <- xy[[i]][, "y"]
-    res[[i]] <- apply(t(df), 2, function(degf) method(formula()))
-      }
-  mean(mspe)
-  return(error_estimate)
-}
+GenCont <- na.omit(GenCont)
+Shrink_results <- compare_ols_ridge(GenCont$Phenotypes, GenCont[,-1], lambda = 1)
+```
 
-k_fold(formula = mpg ~ hp + wt + am, data=mtcars)
+## Exploring Lambda
+
+```{r}
+Diff_lambda <- NULL
+for (i in seq(0.1,100,1)){
+  Diff_lambda <- rbind(Diff_lambda, compare_ols_ridge(GenCont$Phenotypes, GenCont[,-1], lambda = i))
+}
+```
+
+```{r}
+library(tidyr)
+library(ggplot2)
+Diff_lambda <- gather(data.frame(Diff_lambda), key=model, value=mse, - lambda) 
+ggplot(Diff_lambda, aes(lambda,mse)) + geom_smooth(aes(colour=model), se=F)
+```
+
+Around 25?
+
+Check? Lambda for minimum value is 0.12
+
+```{r}
+set.seed(768)
+inds <- sample(length(responses), size = length(responses)/2)
+
+x <- model.matrix(Phenotypes~., GenCont)[,-1]
+x_train <- x[inds,]
+y_train <- GenCont$Phenotypes[inds] # response
+x_test <- x[-inds]
+y_test <- GenCont$Phenotypes[-inds]
+
+mod_ridge <- cv.glmnet(x_train, y_train, alpha=0)
+mod_ridge$lambda.min
 
 ```
 

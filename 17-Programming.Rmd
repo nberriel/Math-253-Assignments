@@ -1,7 +1,108 @@
 # In-Class Programming Activity, Day 17
 
-Your work goes here ...
+###NADIA BERRIEL
 
+
+## Growing and Pruning Tree
+```{r}
+Cartoon_data <- data.frame(
+  x = 1:8,
+  y = c(2,5,1,3,8,5,4,6),
+  class = c("A","B","A","A","B","B","A","B")
+) 
+
+library(tree)
+```
+
+## Perfectly pure tree
+```{r}
+pure <- tree.control(8, mincut = 0, minsize = 1, mindev = 0) #what is this?
+```
+
+## Regression tree
+```{r}
+rtree_pure <- tree(y ~ x, data=Cartoon_data, control = pure)
+plot(rtree_pure)
+text(rtree_pure)
+```
+
+The output for x=3 is 1
+
+## Classification tree
+```{r}
+ctree_pure <- tree(class~x, data=Cartoon_data, control = pure)
+plot(ctree_pure)
+text(ctree_pure)
+```
+
+The output for x=7 is A
+
+## Evaluating the tree
+```{r}
+predict(rtree_pure)
+predict(ctree_pure)
+predict(rtree_pure, newdata = data.frame(x=3))
+predict(ctree_pure, newdata = data.frame(x=7))
+```
+
+## Deviance of each node
+```{r}
+print(ctree_pure)
+print(rtree_pure)
+```
+
+The deviance each node eliminates, regression tree:
+4.5: 18
+2.5: 2.25
+1.5: 4.5
+3.5: 2
+5.5: 6.75
+7.5: 1.5
+6.5: 0.5
+
+Classification tree:
+4.5: 2.11
+2.5: 1.29
+6.5: 1.79
+1.5: 2.7
+7.5: 2.7
+
+## Deviance of a tree
+```{r}
+rtree_pred <-predict(rtree_pure, newdata = Cartoon_data)
+rtree_devi <- sum((Cartoon_data$y - rtree_pred)^2) #equals 0
+
+```
+
+## Pruning the tree
+```{r}
+rtree_5 <- prune.tree(rtree_pure, best=5)
+ctree_2 <- prune.misclass(ctree_pure, best=2)
+dev_vs_nodes <- function(nnodes) {
+  pruned <- prune.tree(rtree_pure, best = nnodes)
+  deviance(pruned)
+}
+nterminal <- 2:8
+tree_deviance <- sapply(nterminal, FUN = dev_vs_nodes)
+plot(nterminal, tree_deviance)
+```
+
+## Building a real clasifier
+```{r}
+library(mosaicData)
+pure_for_cps <- tree.control(nrow(CPS85), mincut=0, minsize = 1, mindev = 0)
+Sector_classifier <- tree(sector~wage+sex+educ+exper, data=CPS85, control=pure_for_cps)
+tree_prune <- prune.misclass(Sector_classifier,best=20)
+deviance(tree_prune)
+plot(tree_prune)
+text(tree_prune)
+
+tree_cv <- cv.tree(Sector_classifier, FUN=prune.misclass) #6 gives the best test error
+tree_prune_2 <- prune.misclass(Sector_classifier, best=6)
+deviance(tree_prune_2)
+plot(tree_prune_2)
+text(tree_prune_2)
+```
 
 
 ## Test statements

@@ -1,2 +1,113 @@
 # Topic 6 Exercises: Selecting Model Terms
 
+## 6.8.1
+
+a) Best subset will have the smallest RSS because best subset method's model was compared to all other possible models with k predictors, while backward and forward stepwise models might not have been compared to the best subset method.
+b) Best subset will likely have the smallest test RSS because it is the most optimal compared to all other models. However, forward and backward stepwise might get lucky and create lower test error.
+c)
+i.True. Because forward stepwise add one more predictor to the k-variable that would reduce the RSS by the largest amount.
+ii. True. Because backward stepwise will will remove one variable from k+1-variable model that improve RSS by the least amount
+iii. False. Because neither forward nor backward produce the optimal model, they might create different models for different k.
+iv. False. Same as above.
+v. False. Some times best subset can replace a variable in k-model with two different variables in (k+1)-model to produce the smallest adjusted R^2.
+
+## 6.8.2
+a)iii
+Lasso selects out some predictors so the model has fewer degrees of freedom and become less flexible. This leads to a decrease in variance and increase in bias. So prediction improved when the increase in bias is less than the decrease in variance.
+b)iii
+Ridge regression minimizes the value of coefficients, making the model have lower variance but increased bias. Thus, it has the same effects as the lasso.
+c)ii
+Non-linear motheds are more flexible because it has additional terms. They have higher variance and lower bias compared to least square. Thus, they improve predictions if the increase in variance is less than decrease in bias.
+
+## 6.8.9
+
+Predict number of application received using College data set
+a) Split the data into training and testing set
+
+```{r}
+library(ISLR)
+library(glmnet)
+set.seed(6)
+inds <- sample(nrow(College), size=nrow(College)/2)
+Train <- College[inds,]
+Test <- College[-inds,]
+```
+
+b) Fit a linear least square model on trainning set and report test MSE
+
+```{r}
+mod_linear <- lm(Apps~., data=Train)
+pred <- predict(mod_linear, newdata = Test)
+
+testerror <- numeric(5)
+testerror[1] <- mean((Test$Apps - pred)^2)
+testerror[1]
+```
+
+Test error is around 1,200,000
+
+c) Fit a ridge regression and report test error
+```{r}
+x_train <- model.matrix(Apps~., data=Train)
+y_train <- Train$Apps
+x_test <- model.matrix(Apps~., data=Test)
+y_test <- Test$Apps
+
+mod_ridge <- cv.glmnet(x_train, y_train, alpha=0)
+lambda_best <- mod_ridge$lambda.min
+lambda_best
+pred <- predict(mod_ridge, newx = x_test, s=lambda_best)
+
+testerror[2] <- mean((y_test - pred)^2)
+testerror[2]
+```
+
+Test error is smaller now.
+
+d) Fit the Lasso
+```{r}
+mod_lasso <- cv.glmnet(x_train, y_train, alpha=1)
+lambda_best <- mod_lasso$lambda.min
+lambda_best
+pred <- predict(mod_lasso, newx = x_test, s=lambda_best)
+testerror[3] <- mean((y_test - pred)^2)
+testerror[3]
+lasso_coefs <- predict(mod_lasso, type="coefficients", s=lambda_best)
+lasso_coefs
+```
+
+Test error is similar to OLS
+There are 13 terms in the Lasso model
+
+d) Fit a PCR
+
+```{r}
+library(pls)
+mod_pcr = pcr(Apps~., data=Train, validation="CV", scale=T)
+validationplot(mod_pcr, val.type = "MSEP") #maybe 15 components
+pred <- predict(mod_pcr, newdata = Test, ncomp=15)
+testerror[4] <- mean((Test$Apps - pred)^2)
+testerror[4]
+```
+
+Test error is higher than OLS
+
+e) Fit a PLS
+
+```{r}
+mod_pls <- plsr(Apps~., data=Train, validation ="CV", scale=T)
+validationplot(mod_pls, val.type = "MSEP") # 6 components
+pred <- predict(mod_pls, newdata = Test, ncomp=6)
+testerror[5] <- mean((Test$Apps - pred)^2)
+testerror[5]
+```
+
+Test error slightly higher than OLS
+
+f) Comment on the results obtained:
+
+They all have quite comparable performance on test error. Ridge improves on ols, while pcr does worse.
+
+```{r}
+plot(1:5, testerror) #1: ols, 2: ridge, 3: lasso, 4: pcr, 5: pls
+```
